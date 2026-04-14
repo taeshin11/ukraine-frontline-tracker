@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { setRequestLocale } from 'next-intl/server'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
@@ -7,7 +8,10 @@ export const metadata: Metadata = {
   keywords: 'privacy policy, data protection, cookies, GDPR',
 }
 
-export default function PrivacyPage() {
+export default async function PrivacyPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  setRequestLocale(locale)
+
   const sections = [
     { title: '1. Introduction', content: 'Ukraine Frontline Tracker operates the website at ukraine-frontline-tracker.vercel.app. This Privacy Policy explains how we collect, use, disclose, and safeguard your information.' },
     { title: '2. Information We Collect', content: 'We automatically collect browser type, OS, referring URLs, device info, and pages visited. We do not require registration or intentionally collect personally identifiable information.' },
@@ -24,7 +28,7 @@ export default function PrivacyPage() {
     <main className="bg-slate-50 min-h-screen">
       <div className="max-w-4xl mx-auto px-4 py-12">
         <nav className="text-sm text-slate-500 mb-8">
-          <Link href="/" className="hover:text-slate-700">Home</Link>
+          <Link href={`/${locale}`} className="hover:text-slate-700">Home</Link>
           <span className="mx-2">/</span>
           <span>Privacy Policy</span>
         </nav>

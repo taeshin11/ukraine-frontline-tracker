@@ -19,9 +19,9 @@ const STATUS_STYLES: Record<string, string> = {
   "relatively-stable": "bg-green-500/10 text-green-600 ring-1 ring-inset ring-green-500/20",
 };
 
-export default function RegionCard({ region }: { region: Region }) {
+export default function RegionCard({ region, locale = 'en' }: { region: Region; locale?: string }) {
   return (
-    <Link href={`/region/${region.slug}`} className="block group">
+    <Link href={`/${locale}/region/${region.slug}`} className="block group">
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 p-5">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">

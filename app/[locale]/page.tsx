@@ -7,6 +7,7 @@ import FrontlineChart from "@/components/FrontlineChart";
 import AdInContent from "@/components/ads/AdInContent";
 import AdSidebar from "@/components/ads/AdSidebar";
 import type { Metadata } from "next";
+import { setRequestLocale } from 'next-intl/server'
 
 export const metadata: Metadata = {
   title: 'Ukraine Frontline Tracker | Real-Time Conflict Intelligence',
@@ -43,7 +44,10 @@ async function getData() {
   };
 }
 
-export default async function Home() {
+export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  setRequestLocale(locale)
+
   const { frontline, regions } = await getData();
   const latest = frontline.snapshots.sort((a, b) => b.date.localeCompare(a.date))[0];
 
@@ -71,9 +75,9 @@ export default async function Home() {
         </div>
       </div>
 
-      {/* Stat Cards - floating overlap */}
+      {/* Stat Cards */}
       <div className="max-w-7xl mx-auto px-4">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 -mt-0 relative z-10 my-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 relative z-10 my-8">
           <ChangeCard label="7-Day Change" value={-latest.change_7d_km2} unit="km²" note={latest.change_notes} />
           <ChangeCard label="30-Day Change" value={-latest.change_30d_km2} unit="km²" />
           <ChangeCard
@@ -104,7 +108,7 @@ export default async function Home() {
             <div id="regions" className="mb-8">
               <h2 className="text-xl font-bold text-slate-900 mb-4">Regions</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {regions.map((r) => <RegionCard key={r.id} region={r} />)}
+                {regions.map((r) => <RegionCard key={r.id} region={r} locale={locale} />)}
               </div>
             </div>
           </div>

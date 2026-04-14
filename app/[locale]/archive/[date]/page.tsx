@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import ChangeCard from "@/components/ChangeCard";
 import type { Metadata } from "next";
+import { setRequestLocale } from 'next-intl/server'
+import { routing } from '@/i18n/routing'
 
 type Snapshot = {
   date: string; russia_controlled_km2: number; ukraine_controlled_km2: number;
@@ -17,26 +19,28 @@ async function getSnapshots(): Promise<Snapshot[]> {
 
 export async function generateStaticParams() {
   const snapshots = await getSnapshots();
-  return snapshots.map((s) => ({ date: s.date }));
+  return routing.locales.flatMap(locale => snapshots.map((s) => ({ locale, date: s.date })));
 }
 
-export async function generateMetadata(props: PageProps<"/archive/[date]">): Promise<Metadata> {
-  const { date } = await props.params;
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; date: string }> }): Promise<Metadata> {
+  const { date } = await params;
   return {
     title: `Ukraine Frontline ${date} — Historical Snapshot`,
     description: `Ukraine frontline data snapshot for ${date}.`,
   };
 }
 
-export default async function ArchivePage(props: PageProps<"/archive/[date]">) {
-  const { date } = await props.params;
+export default async function ArchivePage({ params }: { params: Promise<{ locale: string; date: string }> }) {
+  const { locale, date } = await params;
+  setRequestLocale(locale)
+
   const snapshots = await getSnapshots();
   const snapshot = snapshots.find((s) => s.date === date);
   if (!snapshot) notFound();
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
-      <Link href="/" className="text-sm text-slate-500 hover:text-blue-600 transition-colors mb-6 inline-flex items-center gap-1">
+      <Link href={`/${locale}`} className="text-sm text-slate-500 hover:text-blue-600 transition-colors mb-6 inline-flex items-center gap-1">
         ← Dashboard
       </Link>
 

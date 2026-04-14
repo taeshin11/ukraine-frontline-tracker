@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import FrontlineChart from "@/components/FrontlineChart";
 import type { Metadata } from "next";
+import { setRequestLocale } from 'next-intl/server'
+import { routing } from '@/i18n/routing'
 
 type Region = {
   id: string; slug: string; name: string; flag_emoji: string;
@@ -26,11 +28,11 @@ async function getData() {
 
 export async function generateStaticParams() {
   const regions = JSON.parse(await fs.readFile(path.join(process.cwd(), "public/data/regions.json"), "utf-8")) as Region[];
-  return regions.map((r) => ({ slug: r.slug }));
+  return routing.locales.flatMap(locale => regions.map((r) => ({ locale, slug: r.slug })));
 }
 
-export async function generateMetadata(props: PageProps<"/region/[slug]">): Promise<Metadata> {
-  const { slug } = await props.params;
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
   const regions = JSON.parse(await fs.readFile(path.join(process.cwd(), "public/data/regions.json"), "utf-8")) as Region[];
   const region = regions.find((r) => r.slug === slug);
   if (!region) return {};
@@ -46,8 +48,10 @@ const STATUS_STYLES: Record<string, string> = {
   "relatively-stable": "bg-green-500/10 text-green-600 ring-1 ring-inset ring-green-500/20",
 };
 
-export default async function RegionPage(props: PageProps<"/region/[slug]">) {
-  const { slug } = await props.params;
+export default async function RegionPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
+  const { locale, slug } = await params;
+  setRequestLocale(locale)
+
   const { regions, snapshots } = await getData();
   const region = regions.find((r) => r.slug === slug);
   if (!region) notFound();
@@ -56,7 +60,7 @@ export default async function RegionPage(props: PageProps<"/region/[slug]">) {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
-      <Link href="/" className="text-sm text-slate-500 hover:text-blue-600 transition-colors mb-6 inline-flex items-center gap-1">
+      <Link href={`/${locale}`} className="text-sm text-slate-500 hover:text-blue-600 transition-colors mb-6 inline-flex items-center gap-1">
         ← Dashboard
       </Link>
 
