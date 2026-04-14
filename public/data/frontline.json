@@ -1,0 +1,9 @@
+{
+  "updated": "2026-04-14",
+  "today_summary": "Moderate Russian pressure along the Toretsk-Chasiv Yar axis. Incremental Ukrainian advances near Robotyne.",
+  "snapshots": [
+    {"date":"2026-04-14","russia_controlled_km2":82000,"ukraine_controlled_km2":521000,"frontline_length_km":1200,"change_7d_km2":-50,"change_30d_km2":-180,"change_notes":"Russia gained ~50 sq km in 7 days, primarily in Donetsk oblast."},
+    {"date":"2026-04-07","russia_controlled_km2":81950,"ukraine_controlled_km2":521050,"frontline_length_km":1198,"change_7d_km2":-80,"change_30d_km2":-200,"change_notes":"Continued Russian pressure in Avdiivka aftermath area."},
+    {"date":"2026-03-14","russia_controlled_km2":81870,"ukraine_controlled_km2":521130,"frontline_length_km":1195,"change_7d_km2":-30,"change_30d_km2":-150,"change_notes":"Relatively stable week."}
+  ]
+}
