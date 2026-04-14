@@ -5,6 +5,7 @@ import AdHeader from "@/components/ads/AdHeader";
 import AdMobileSticky from "@/components/ads/AdMobileSticky";
 import VisitorCounter from "@/components/VisitorCounter";
 import Link from "next/link";
+import { FeedbackButton } from "@/components/FeedbackButton";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 
@@ -75,6 +76,20 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </div>
         </footer>
         <AdMobileSticky />
+        <FeedbackButton siteName="Ukraine Frontline Tracker" siteUrl="https://ukraine-frontline-tracker.vercel.app" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "Ukraine Frontline Tracker",
+              "url": "https://ukraine-frontline-tracker.vercel.app",
+              "description": "Daily frontline changes, territorial control statistics, and battle data for the Russia-Ukraine war",
+              "publisher": { "@type": "Organization", "name": "Ukraine Frontline Tracker", "url": "https://ukraine-frontline-tracker.vercel.app" }
+            })
+          }}
+        />
       </body>
     </html>
   );
