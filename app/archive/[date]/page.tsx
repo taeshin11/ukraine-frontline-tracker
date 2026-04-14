@@ -35,10 +35,18 @@ export default async function ArchivePage(props: PageProps<"/archive/[date]">) {
   if (!snapshot) notFound();
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-      <Link href="/" className="text-sm text-gray-400 hover:text-white mb-6 inline-block">← Dashboard</Link>
-      <h1 className="text-3xl font-bold text-white mb-2">Archive: {snapshot.date}</h1>
-      <p className="text-gray-400 mb-6">{snapshot.change_notes}</p>
+    <div className="max-w-3xl mx-auto px-4 py-12">
+      <Link href="/" className="text-sm text-slate-500 hover:text-blue-600 transition-colors mb-6 inline-flex items-center gap-1">
+        ← Dashboard
+      </Link>
+
+      <div className="mb-8">
+        <p className="text-blue-600 text-xs font-bold uppercase tracking-widest mb-2">🇺🇦 ARCHIVE SNAPSHOT</p>
+        <h1 className="text-3xl font-extrabold text-slate-900 mb-2">Frontline: {snapshot.date}</h1>
+        {snapshot.change_notes && (
+          <p className="text-slate-600 mt-2 leading-relaxed">{snapshot.change_notes}</p>
+        )}
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <ChangeCard label="7-Day Change" value={-snapshot.change_7d_km2} unit="km²" />
@@ -46,14 +54,21 @@ export default async function ArchivePage(props: PageProps<"/archive/[date]">) {
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <div className="bg-gray-900 border border-red-800 rounded-lg p-4 text-center">
-          <div className="text-xs text-red-400 mb-1">Russia controlled</div>
-          <div className="text-2xl font-bold text-red-300">{snapshot.russia_controlled_km2.toLocaleString()} km²</div>
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 text-center">
+          <div className="text-xs font-bold text-red-500 uppercase tracking-wider mb-2">Russia controlled</div>
+          <div className="text-3xl font-black text-red-600">{snapshot.russia_controlled_km2.toLocaleString()}</div>
+          <div className="text-xs text-slate-400 mt-1">km²</div>
         </div>
-        <div className="bg-gray-900 border border-blue-800 rounded-lg p-4 text-center">
-          <div className="text-xs text-blue-400 mb-1">Ukraine controlled</div>
-          <div className="text-2xl font-bold text-blue-300">{snapshot.ukraine_controlled_km2.toLocaleString()} km²</div>
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 text-center">
+          <div className="text-xs font-bold text-blue-500 uppercase tracking-wider mb-2">Ukraine controlled</div>
+          <div className="text-3xl font-black text-blue-600">{snapshot.ukraine_controlled_km2.toLocaleString()}</div>
+          <div className="text-xs text-slate-400 mt-1">km²</div>
         </div>
+      </div>
+
+      <div className="mt-6 bg-white rounded-2xl border border-slate-100 shadow-sm p-6 text-center">
+        <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Frontline Length</div>
+        <div className="text-3xl font-black text-slate-900">{snapshot.frontline_length_km.toLocaleString()} km</div>
       </div>
     </div>
   );

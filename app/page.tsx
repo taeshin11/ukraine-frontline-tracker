@@ -9,9 +9,9 @@ import AdSidebar from "@/components/ads/AdSidebar";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Ukraine Frontline Tracker — Today's War Map Update April 2026",
-  description: "Ukraine frontline map today. Daily territorial change data, region analysis, ISW sourced. Ukraine war update.",
-  keywords: "ukraine frontline, ukraine war map today, ukraine frontline change, russia ukraine war update",
+  title: 'Ukraine Frontline Tracker | Real-Time Conflict Intelligence',
+  description: 'Daily frontline changes, territorial control statistics, and comprehensive battle data for the Russia-Ukraine war',
+  keywords: 'Ukraine frontline, Russia Ukraine war, frontline map, territorial control, Ukraine conflict, Donbas',
 };
 
 type Snapshot = {
@@ -48,104 +48,113 @@ export default async function Home() {
   const latest = frontline.snapshots.sort((a, b) => b.date.localeCompare(a.date))[0];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-white mb-2">Ukraine Frontline Tracker</h1>
-        <p className="text-gray-400 text-sm">
-          Updated: {frontline.updated} · Source: ISW, DeepState Map, Ukrainian Armed Forces
-        </p>
-        <div className="mt-3 bg-yellow-950 border border-yellow-800 rounded-lg p-3 text-sm text-yellow-300">
-          Today: {frontline.today_summary}
+    <div>
+      {/* Hero */}
+      <section className="bg-gradient-to-br from-slate-900 via-blue-950/30 to-slate-900 text-white py-12 px-4">
+        <div className="max-w-7xl mx-auto">
+          <p className="text-blue-400 text-xs font-bold uppercase tracking-widest mb-3">🇺🇦 UKRAINE WAR TRACKER</p>
+          <h1 className="text-4xl font-extrabold mb-4">
+            Ukraine Frontline<br/>
+            <span className="text-blue-400">Tracker</span>
+          </h1>
+          <p className="text-slate-300 text-base max-w-2xl mb-2">
+            Daily frontline change summaries with regional breakdowns. Today / 7-day / 30-day shift analysis.
+          </p>
+          <p className="text-slate-500 text-xs">Updated: {frontline.updated} · Source: ISW, DeepState Map, Ukrainian Armed Forces</p>
+        </div>
+      </section>
+
+      {/* Alert Banner */}
+      <div className="bg-blue-950/40 border-b border-blue-800/30 px-4 py-3">
+        <div className="max-w-7xl mx-auto text-sm text-blue-200">
+          <span className="font-bold text-blue-400">Today: </span>{frontline.today_summary}
         </div>
       </div>
 
-      <div className="flex gap-8">
-        <div className="flex-1 min-w-0">
-          {/* Change Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <ChangeCard
-              label="7-Day Change (Russia net gain)"
-              value={-latest.change_7d_km2}
-              unit="km²"
-              note={latest.change_notes}
-            />
-            <ChangeCard
-              label="30-Day Change (Russia net gain)"
-              value={-latest.change_30d_km2}
-              unit="km²"
-            />
-            <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
-              <div className="text-xs text-gray-400 mb-1">Frontline Length</div>
-              <div className="text-2xl font-bold text-white">{latest.frontline_length_km.toLocaleString()} km</div>
-              <div className="text-xs text-gray-500 mt-1">Russian-controlled: {latest.russia_controlled_km2.toLocaleString()} km²</div>
-            </div>
-          </div>
-
-          {/* Map Placeholder */}
-          <div className="mb-8">
-            <MapPlaceholder />
-          </div>
-
-          <AdInContent />
-
-          {/* Chart */}
-          <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 mb-8">
-            <h2 className="font-semibold text-white mb-4">Territory Control Over Time</h2>
-            <FrontlineChart snapshots={frontline.snapshots} />
-          </div>
-
-          {/* Region Grid */}
-          <h2 className="text-xl font-semibold text-white mb-4">Regions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {regions.map((r) => <RegionCard key={r.id} region={r} />)}
-          </div>
+      {/* Stat Cards - floating overlap */}
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 -mt-0 relative z-10 my-8">
+          <ChangeCard label="7-Day Change" value={-latest.change_7d_km2} unit="km²" note={latest.change_notes} />
+          <ChangeCard label="30-Day Change" value={-latest.change_30d_km2} unit="km²" />
+          <ChangeCard
+            label="Frontline Length"
+            value={0}
+            unit="km"
+            note={`Russian-controlled: ${latest.russia_controlled_km2.toLocaleString()} km²`}
+            staticValue={`${latest.frontline_length_km.toLocaleString()} km`}
+          />
         </div>
 
-        <aside className="hidden lg:block w-[300px] shrink-0">
-          <AdSidebar />
-          <div className="mt-6 bg-gray-900 border border-gray-700 rounded-lg p-4">
-            <h3 className="font-semibold text-white mb-3 text-sm">Status Legend</h3>
-            <div className="space-y-2 text-xs">
-              <div className="flex items-center gap-2">
-                <span className="bg-red-900 text-red-300 px-2 py-0.5 rounded-full text-xs">active-combat</span>
-                <span className="text-gray-400">Ongoing fighting</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="bg-orange-900 text-orange-300 px-2 py-0.5 rounded-full text-xs">contested</span>
-                <span className="text-gray-400">Disputed control</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="bg-green-900 text-green-300 px-2 py-0.5 rounded-full text-xs">relatively-stable</span>
-                <span className="text-gray-400">Low activity</span>
+        <div className="flex gap-8">
+          <div className="flex-1 min-w-0">
+            {/* Map */}
+            <div className="mb-8">
+              <MapPlaceholder />
+            </div>
+
+            <AdInContent />
+
+            {/* Chart */}
+            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 mb-8">
+              <h2 className="font-bold text-slate-900 mb-4">Territory Control Over Time</h2>
+              <FrontlineChart snapshots={frontline.snapshots} />
+            </div>
+
+            {/* Region Grid */}
+            <div id="regions" className="mb-8">
+              <h2 className="text-xl font-bold text-slate-900 mb-4">Regions</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {regions.map((r) => <RegionCard key={r.id} region={r} />)}
               </div>
             </div>
-            <div className="mt-4 pt-4 border-t border-gray-700">
-              <h3 className="font-semibold text-white mb-3 text-sm">Change Color Code</h3>
+          </div>
+
+          <aside className="hidden lg:block w-[300px] shrink-0">
+            <AdSidebar />
+            <div className="mt-6 bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+              <h3 className="font-bold text-slate-900 mb-3 text-sm">Status Legend</h3>
               <div className="space-y-2 text-xs">
                 <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded bg-red-600 shrink-0"></span>
-                  <span className="text-red-400">Russia gaining</span>
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-500/10 text-red-600 ring-1 ring-inset ring-red-500/20">active combat</span>
+                  <span className="text-slate-500">Ongoing fighting</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded bg-green-600 shrink-0"></span>
-                  <span className="text-green-400">Ukraine gaining</span>
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-orange-500/10 text-orange-600 ring-1 ring-inset ring-orange-500/20">contested</span>
+                  <span className="text-slate-500">Disputed control</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded bg-gray-600 shrink-0"></span>
-                  <span className="text-gray-400">No change</span>
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-500/10 text-green-600 ring-1 ring-inset ring-green-500/20">stable</span>
+                  <span className="text-slate-500">Low activity</span>
+                </div>
+              </div>
+              <div className="mt-4 pt-4 border-t border-slate-100">
+                <h3 className="font-bold text-slate-900 mb-3 text-sm">Change Color Code</h3>
+                <div className="space-y-2 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded bg-red-500 shrink-0"></span>
+                    <span className="text-red-600 font-medium">Russia gaining</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded bg-green-500 shrink-0"></span>
+                    <span className="text-green-600 font-medium">Ukraine gaining</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded bg-slate-400 shrink-0"></span>
+                    <span className="text-slate-500">No change</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="mt-4 bg-gray-900 border border-gray-700 rounded-lg p-4">
-            <h3 className="font-semibold text-white mb-2 text-sm">Data Sources</h3>
-            <ul className="text-xs text-gray-400 space-y-1">
-              <li><a href="https://www.understandingwar.org" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400">ISW Daily Reports</a></li>
-              <li><a href="https://deepstatemap.live" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400">DeepState Map</a></li>
-              <li>Ukrainian Armed Forces GS</li>
-            </ul>
-          </div>
-        </aside>
+            <div className="mt-4 bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+              <h3 className="font-bold text-slate-900 mb-2 text-sm">Data Sources</h3>
+              <ul className="text-xs text-slate-500 space-y-1.5">
+                <li><a href="https://www.understandingwar.org" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 transition-colors font-medium">ISW Daily Reports ↗</a></li>
+                <li><a href="https://deepstatemap.live" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 transition-colors font-medium">DeepState Map ↗</a></li>
+                <li className="text-slate-400">Ukrainian Armed Forces GS</li>
+              </ul>
+            </div>
+          </aside>
+        </div>
       </div>
     </div>
   );

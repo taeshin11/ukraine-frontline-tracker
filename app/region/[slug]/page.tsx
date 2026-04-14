@@ -41,9 +41,9 @@ export async function generateMetadata(props: PageProps<"/region/[slug]">): Prom
 }
 
 const STATUS_STYLES: Record<string, string> = {
-  "active-combat": "bg-red-900 text-red-300",
-  "contested": "bg-orange-900 text-orange-300",
-  "relatively-stable": "bg-green-900 text-green-300",
+  "active-combat": "bg-red-500/10 text-red-600 ring-1 ring-inset ring-red-500/20",
+  "contested": "bg-orange-500/10 text-orange-600 ring-1 ring-inset ring-orange-500/20",
+  "relatively-stable": "bg-green-500/10 text-green-600 ring-1 ring-inset ring-green-500/20",
 };
 
 export default async function RegionPage(props: PageProps<"/region/[slug]">) {
@@ -52,52 +52,61 @@ export default async function RegionPage(props: PageProps<"/region/[slug]">) {
   const region = regions.find((r) => r.slug === slug);
   if (!region) notFound();
 
-  return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <Link href="/" className="text-sm text-gray-400 hover:text-white mb-6 inline-block">← Dashboard</Link>
+  const ukraineControlPct = 100 - region.russian_control_pct;
 
-      <div className="flex items-start justify-between mb-6">
+  return (
+    <div className="max-w-4xl mx-auto px-4 py-12">
+      <Link href="/" className="text-sm text-slate-500 hover:text-blue-600 transition-colors mb-6 inline-flex items-center gap-1">
+        ← Dashboard
+      </Link>
+
+      <div className="flex items-start justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white">{region.name}</h1>
-          <p className="text-gray-400 text-sm mt-1">Updated: {region.last_updated}</p>
+          <p className="text-blue-600 text-xs font-bold uppercase tracking-widest mb-2">🇺🇦 REGION ANALYSIS</p>
+          <h1 className="text-3xl font-extrabold text-slate-900">
+            {region.flag_emoji && <span className="mr-2">{region.flag_emoji}</span>}
+            {region.name}
+          </h1>
+          <p className="text-slate-400 text-sm mt-1">Last updated: {region.last_updated}</p>
         </div>
-        <span className={`text-sm px-3 py-1 rounded-full ${STATUS_STYLES[region.status] || "bg-gray-700 text-gray-300"}`}>
+        <span className={`px-3 py-1.5 rounded-full text-sm font-semibold shrink-0 ${STATUS_STYLES[region.status] || "bg-slate-500/10 text-slate-600 ring-1 ring-inset ring-slate-500/20"}`}>
           {region.status.replace(/-/g, " ")}
         </span>
       </div>
 
-      {/* Control bar */}
-      <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 mb-6">
-        <div className="flex justify-between text-sm text-gray-400 mb-2">
-          <span>Russian control: {region.russian_control_pct}%</span>
-          <span className={region.change_7d > 0 ? "text-red-400" : region.change_7d < 0 ? "text-green-400" : "text-gray-400"}>
+      {/* Control breakdown */}
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 mb-6">
+        <div className="flex justify-between text-sm font-semibold mb-3">
+          <span className="text-red-600">Russia {region.russian_control_pct}%</span>
+          <span className={region.change_7d > 0 ? "text-red-500 text-xs" : region.change_7d < 0 ? "text-green-600 text-xs" : "text-slate-400 text-xs"}>
             7d: {region.change_7d > 0 ? "+" : ""}{region.change_7d}%
           </span>
+          <span className="text-blue-600">Ukraine {ukraineControlPct}%</span>
         </div>
-        <div className="w-full bg-gray-700 rounded-full h-4">
-          <div className="bg-red-600 h-4 rounded-l-full" style={{ width: `${region.russian_control_pct}%` }} />
-        </div>
-        <div className="flex justify-between text-xs text-gray-500 mt-1">
-          <span className="text-red-400">Russia {region.russian_control_pct}%</span>
-          <span className="text-blue-400">Ukraine {100 - region.russian_control_pct}%</span>
+        <div className="h-4 bg-blue-200 rounded-full overflow-hidden">
+          <div className="h-4 bg-gradient-to-r from-red-500 to-red-600 rounded-l-full transition-all" style={{ width: `${region.russian_control_pct}%` }} />
         </div>
       </div>
 
-      <p className="text-gray-300 mb-6 leading-relaxed">{region.summary}</p>
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 mb-6">
+        <p className="text-slate-700 leading-relaxed">{region.summary}</p>
+      </div>
 
-      <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 mb-6">
-        <h2 className="font-semibold text-white mb-3">Key Locations</h2>
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 mb-6">
+        <h2 className="font-bold text-slate-900 mb-3">Key Locations</h2>
         <div className="flex flex-wrap gap-2">
           {region.key_locations.map((loc) => (
-            <span key={loc} className="bg-gray-800 border border-gray-700 px-3 py-1 rounded text-sm text-gray-300">{loc}</span>
+            <span key={loc} className="bg-slate-100 border border-slate-200 px-3 py-1 rounded-lg text-sm text-slate-700 font-medium">
+              {loc}
+            </span>
           ))}
         </div>
       </div>
 
-      <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
-        <h2 className="font-semibold text-white mb-4">Overall Frontline Trend</h2>
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+        <h2 className="font-bold text-slate-900 mb-4">Overall Frontline Trend</h2>
         <FrontlineChart snapshots={snapshots} />
-        <p className="text-xs text-gray-500 mt-2">Chart shows total Ukraine-wide control figures from ISW data</p>
+        <p className="text-xs text-slate-400 mt-2">Chart shows total Ukraine-wide control figures from ISW data</p>
       </div>
     </div>
   );

@@ -14,49 +14,46 @@ type Region = {
 };
 
 const STATUS_STYLES: Record<string, string> = {
-  "active-combat": "bg-red-900 text-red-300",
-  "contested": "bg-orange-900 text-orange-300",
-  "relatively-stable": "bg-green-900 text-green-300",
+  "active-combat": "bg-red-500/10 text-red-600 ring-1 ring-inset ring-red-500/20",
+  "contested": "bg-orange-500/10 text-orange-600 ring-1 ring-inset ring-orange-500/20",
+  "relatively-stable": "bg-green-500/10 text-green-600 ring-1 ring-inset ring-green-500/20",
 };
 
 export default function RegionCard({ region }: { region: Region }) {
-  const changeColor = region.change_7d > 0 ? "text-red-400" : region.change_7d < 0 ? "text-green-400" : "text-gray-400";
-  const changeArrow = region.change_7d > 0 ? "▲" : region.change_7d < 0 ? "▼" : "→";
-
   return (
-    <Link href={`/region/${region.slug}`} className="block bg-gray-900 border border-gray-700 rounded-lg p-4 hover:border-blue-500 transition-colors">
-      <div className="flex items-start justify-between mb-2">
-        <h3 className="font-semibold text-white text-sm">{region.name}</h3>
-        <span className={`text-xs px-2 py-0.5 rounded-full ml-2 shrink-0 ${STATUS_STYLES[region.status] || "bg-gray-700 text-gray-300"}`}>
-          {region.status.replace(/-/g, " ")}
-        </span>
-      </div>
+    <Link href={`/region/${region.slug}`} className="block group">
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 p-5">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+            {region.flag_emoji && <span className="mr-1.5">{region.flag_emoji}</span>}
+            {region.name}
+          </h3>
+          <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${STATUS_STYLES[region.status] || "bg-slate-500/10 text-slate-600 ring-1 ring-inset ring-slate-500/20"}`}>
+            {region.status.replace(/-/g, " ")}
+          </span>
+        </div>
 
-      <div className="flex items-center gap-3 mb-3">
-        <div className="flex-1">
-          <div className="flex justify-between text-xs text-gray-400 mb-1">
+        <div className="mb-3">
+          <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
             <span>Russian control</span>
-            <span className={changeColor}>{changeArrow} {region.change_7d}% (7d)</span>
+            <span className="font-bold text-slate-800">{region.russian_control_pct}%</span>
           </div>
-          <div className="w-full bg-gray-700 rounded-full h-2">
+          <div className="h-2 bg-slate-100 rounded-full">
             <div
-              className="bg-red-600 h-2 rounded-full transition-all"
+              className="h-2 bg-gradient-to-r from-red-400 to-red-500 rounded-full transition-all"
               style={{ width: `${region.russian_control_pct}%` }}
             />
           </div>
-          <div className="text-xs text-gray-500 mt-1">{region.russian_control_pct}%</div>
         </div>
-      </div>
 
-      <p className="text-xs text-gray-400 mb-3 line-clamp-2">{region.summary}</p>
+        <p className="text-slate-600 text-sm line-clamp-2 mb-3">{region.summary}</p>
 
-      <div className="flex flex-wrap gap-1">
-        {region.key_locations.slice(0, 3).map((loc) => (
-          <span key={loc} className="text-xs bg-gray-800 px-1.5 py-0.5 rounded text-gray-400">{loc}</span>
-        ))}
-        {region.key_locations.length > 3 && (
-          <span className="text-xs text-gray-600">+{region.key_locations.length - 3} more</span>
-        )}
+        <div className="flex items-center justify-between text-xs text-slate-400">
+          <span className="truncate max-w-[60%]">{region.key_locations?.slice(0, 3).join(", ")}</span>
+          <span className={`font-semibold ml-2 ${region.change_7d > 0 ? "text-red-600" : region.change_7d < 0 ? "text-green-600" : "text-slate-500"}`}>
+            {region.change_7d > 0 ? `−${region.change_7d}` : `+${Math.abs(region.change_7d || 0)}`}% 7d
+          </span>
+        </div>
       </div>
     </Link>
   );
